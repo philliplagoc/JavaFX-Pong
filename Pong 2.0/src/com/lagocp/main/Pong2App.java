@@ -2,8 +2,8 @@ package com.lagocp.main;
 
 import java.util.Random;
 
-import com.lagocp.sprites.Ball;
-import com.lagocp.sprites.Paddle;
+import com.lagocp.gameEngine.sprites.Ball;
+import com.lagocp.gameEngine.sprites.Paddle;
 import com.lagocp.ui.UIPane;
 
 import javafx.animation.AnimationTimer;
