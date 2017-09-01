@@ -1,13 +1,12 @@
 package com.lagocp.sprites;
 
-import com.lagocp.sprite.Sprite;
+import com.lagocp.gameEngine.sprite.Sprite;
 
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Ball extends Sprite {
-	private static final double MAX_SPEED = 3;
 
 	public Ball(double x, double y, double width, double height, GraphicsContext gc) {
 		super(x, y, width, height, gc);
@@ -45,30 +44,14 @@ public class Ball extends Sprite {
 		gc.fillOval(getX(), getY(), getWidth(), getHeight());
 	}
 
-	/**
-	 * Will only handle top and bottom collisions.
-	 */
 	@Override
-	public boolean didCollideWithWalls(Canvas canvas) {
-		Bounds bounds = canvas.getBoundsInLocal();
-		
-		boolean atTopWall = this.getY() <= bounds.getMinY() + getHeight() - 20;
-		boolean atBotWall = this.getY() >= bounds.getMaxY() - (2 * this.getRadius());
-
-		if (atTopWall || atBotWall) {
-			this.setvY(getvY() * -1);
-			return true;
-		}
-
-		return false;
-	}
-	
 	public boolean didCollideWithLeftWall(Canvas canvas) {
 		Bounds bounds = canvas.getBoundsInLocal();
 
 		return this.getCenterX() + this.getRadius() <= bounds.getMinX();
 	}
 	
+	@Override
 	public boolean didCollideWithRightWall(Canvas canvas) {
 		Bounds bounds = canvas.getBoundsInLocal();
 
@@ -82,6 +65,18 @@ public class Ball extends Sprite {
 		
 		this.setCenterX(this.getX() + this.getRadius());
 		this.setCenterY(this.getY() + this.getRadius());
+	}
+
+	@Override
+	public boolean didCollideWithTopWall(Canvas canvas) {
+		Bounds bounds = canvas.getBoundsInLocal();
+		return this.getY() <= bounds.getMinY() + getHeight() - 20;
+	}
+
+	@Override
+	public boolean didCollideWithBotWall(Canvas canvas) {
+		Bounds bounds = canvas.getBoundsInLocal();
+		return this.getY() >= bounds.getMaxY() - (2 * this.getRadius());
 	}
 
 }

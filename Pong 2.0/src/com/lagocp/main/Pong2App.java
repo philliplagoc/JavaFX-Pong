@@ -2,8 +2,8 @@ package com.lagocp.main;
 
 import java.util.Random;
 
-import com.lagocp.gameEngine.sprites.Ball;
-import com.lagocp.gameEngine.sprites.Paddle;
+import com.lagocp.sprites.Ball;
+import com.lagocp.sprites.Paddle;
 import com.lagocp.ui.UIPane;
 
 import javafx.animation.AnimationTimer;
@@ -30,7 +30,7 @@ public class Pong2App extends Application {
 	private static final double BALL_Y = CANVAS_HEIGHT / 2;
 	private static final Color BALL_COLOR = Color.BLACK;
 	private static final double BALL_CIRCUMFERENCE = 25;
-	private static final double BALL_SPEED = 1.8;
+	private static final double BALL_SPEED = 2.0;
 
 	Paddle leftPaddle;
 	private static final double LEFT_PADDLE_X = 70;
@@ -114,19 +114,20 @@ public class Pong2App extends Application {
 					reset();
 					uiPane.givePointToPlayer(leftPaddle);
 				}
-
-				// Handle bouncing off of top and bottom walls
-				ball.didCollideWithWalls(canvas);
-
+				
+				if (ball.didCollideWithTopWall(canvas) || ball.didCollideWithBotWall(canvas)) {
+					ball.setvY(-ball.getvY());
+				}
+				
 				// Keep paddle in screen bounds
-				if (leftPaddle.getY() <= canvasBounds.getMinY() + 5)
+				if (leftPaddle.didCollideWithTopWall(canvas))
 					leftPaddle.setY(canvasBounds.getMinY() + 5);
-				if (leftPaddle.getY() >= canvasBounds.getMaxY() - 105)
+				if (leftPaddle.didCollideWithBotWall(canvas))
 					leftPaddle.setY(canvasBounds.getMaxY() - 105);
 
-				if (rightPaddle.getY() <= canvasBounds.getMinY() + 5)
+				if (rightPaddle.didCollideWithTopWall(canvas))
 					rightPaddle.setY(canvasBounds.getMinY() + 5);
-				if (rightPaddle.getY() >= canvasBounds.getMaxY() - 105)
+				if (rightPaddle.didCollideWithBotWall(canvas))
 					rightPaddle.setY(canvasBounds.getMaxY() - 105);
 
 				if (leftPaddle.didCollideWith(ball)) {

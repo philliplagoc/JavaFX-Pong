@@ -1,6 +1,6 @@
 package com.lagocp.sprites;
 
-import com.lagocp.sprite.Sprite;
+import com.lagocp.gameEngine.sprite.Sprite;
 
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
@@ -47,7 +47,7 @@ public class Paddle extends Sprite {
 		if (getName().toLowerCase().equals("right")) {
 			boolean hitXBounds = ballCenterX + ballRadius >= centerX - halfWidth
 					&& ballCenterX + ballRadius <= centerX + halfWidth;
-					
+
 			boolean hitTopPartOfBall = ballCenterY - ballRadius <= centerY + halfHeight
 					&& ballCenterY - ballRadius >= centerY - halfHeight;
 			boolean hitBotPartOfBall = ballCenterY + ballRadius <= centerY + halfHeight
@@ -61,20 +61,6 @@ public class Paddle extends Sprite {
 	@Override
 	public void render(GraphicsContext gc) {
 		gc.fillRect(getX(), getY(), getWidth(), getHeight());
-	}
-
-	@Override
-	public boolean didCollideWithWalls(Canvas canvas) {
-		Bounds bounds = canvas.getBoundsInLocal();
-
-		boolean atTopWall = this.getY() <= bounds.getMinY();
-		boolean atBotWall = this.getY() >= bounds.getMaxY();
-
-		if (atTopWall || atBotWall) {
-			return true;
-		}
-
-		return false;
 	}
 
 	public int getPoints() {
@@ -117,6 +103,29 @@ public class Paddle extends Sprite {
 	public void moveDown(boolean movingDown) {
 		this.setMoveDown(movingDown);
 		setvY((isMoveUp() ? -PADDLE_SPEED : 0) + (isMoveDown() ? PADDLE_SPEED : 0));
+	}
+
+	@Override
+	public boolean didCollideWithTopWall(Canvas canvas) {
+		Bounds bounds = canvas.getBoundsInLocal();
+		return this.getY() <= bounds.getMinY() + 5;
+	}
+
+	@Override
+	public boolean didCollideWithBotWall(Canvas canvas) {
+		Bounds bounds = canvas.getBoundsInLocal();
+
+		return this.getY() >= bounds.getMaxY() - 105;
+	}
+
+	@Override
+	public boolean didCollideWithLeftWall(Canvas canvas) {
+		return false;
+	}
+
+	@Override
+	public boolean didCollideWithRightWall(Canvas canvas) {
+		return false;
 	}
 
 }
