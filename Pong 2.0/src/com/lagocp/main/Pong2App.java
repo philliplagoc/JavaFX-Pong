@@ -1,34 +1,22 @@
 package com.lagocp.main;
 
-/**
- * TODO:
- * Create UI that shows who won the point, and tell user how to serve ball again.
- * 
- * EDIT MADE HERE
- */
 import java.util.Random;
 
 import com.lagocp.sprites.Ball;
 import com.lagocp.sprites.Paddle;
+import com.lagocp.ui.UIPane;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Pong2App extends Application {
@@ -42,7 +30,7 @@ public class Pong2App extends Application {
 	private static final double BALL_Y = CANVAS_HEIGHT / 2;
 	private static final Color BALL_COLOR = Color.BLACK;
 	private static final double BALL_CIRCUMFERENCE = 25;
-	private static final double BALL_SPEED = 2.5;
+	private static final double BALL_SPEED = 1.8;
 
 	Paddle leftPaddle;
 	private static final double LEFT_PADDLE_X = 70;
@@ -63,20 +51,18 @@ public class Pong2App extends Application {
 	GraphicsContext gc;
 
 	// GUI responsible for creating UI
-	private StackPane basePane;
-	private BorderPane uiPane;
-	private StackPane bgPane;
-
-	private Label leftPaddleScoreLabel;
+	private Label leftPaddleScoreLabel = new Label();
 	private int leftPaddleScore;
 
-	private Label rightPaddleScoreLabel;
+	private Label rightPaddleScoreLabel = new Label();
 	private int rightPaddleScore;
-	
-	private VBox stats;
-	private Text ballInfo;
-	private Text leftPaddleInfo;
-	private Text rightPaddleInfo;
+
+	private UIPane uiPane;
+
+	/*
+	 * private VBox stats; private Text ballInfo; private Text leftPaddleInfo;
+	 * private Text rightPaddleInfo;
+	 */
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -104,19 +90,21 @@ public class Pong2App extends Application {
 
 			@Override
 			public void handle(long currentTime) {
-				
+
 				/*
-				ballInfo.setText("Ball (" + ball.getX() + ", " + ball.getY() + ")");
-				leftPaddleInfo.setText("Left Paddle (" + leftPaddle.getX() + ", " + leftPaddle.getY() + ")");
-				rightPaddleInfo.setText("Right Paddle (" + rightPaddle.getX() + ", " + rightPaddle.getY() + ")");
-				*/
-				
+				 * ballInfo.setText("Ball (" + ball.getX() + ", " + ball.getY() + ")");
+				 * leftPaddleInfo.setText("Left Paddle (" + leftPaddle.getX() + ", " +
+				 * leftPaddle.getY() + ")"); rightPaddleInfo.setText("Right Paddle (" +
+				 * rightPaddle.getX() + ", " + rightPaddle.getY() + ")");
+				 */
+
 				// Give point and reset ball.
 				if (ball.didCollideWithLeftWall(canvas)) {
 					givePoint(rightPaddle);
 					rightPaddleScore = rightPaddle.getPoints();
 					rightPaddleScoreLabel.setText("Player 2 Score: " + rightPaddleScore);
 					reset();
+					uiPane.givePointToPlayer(rightPaddle);
 				}
 
 				if (ball.didCollideWithRightWall(canvas)) {
@@ -124,6 +112,7 @@ public class Pong2App extends Application {
 					leftPaddleScore = leftPaddle.getPoints();
 					leftPaddleScoreLabel.setText("Player 1 Score: " + leftPaddleScore);
 					reset();
+					uiPane.givePointToPlayer(leftPaddle);
 				}
 
 				// Handle bouncing off of top and bottom walls
@@ -165,7 +154,6 @@ public class Pong2App extends Application {
 
 				gc.setFill(RIGHT_PADDLE_COLOR);
 				rightPaddle.render(gc);
-				
 
 			}
 
@@ -198,8 +186,6 @@ public class Pong2App extends Application {
 		ball.setY(BALL_Y);
 		ball.setvX(0);
 		ball.setvY(0);
-		// giveBallRandomVelocity();
-		// pointWasMade = false;
 	}
 
 	/**
@@ -207,9 +193,8 @@ public class Pong2App extends Application {
 	 */
 	private void giveBallRandomVelocity() {
 		Random rand = new Random();
-		 ball.setvX(BALL_SPEED * (rand.nextBoolean() ? -1 : 1));
-		//ball.setvX(1.5);
-		 ball.setvY(BALL_SPEED * (rand.nextBoolean() ? -1 : 1));
+		ball.setvX(BALL_SPEED * (rand.nextBoolean() ? -1 : 1));
+		ball.setvY(BALL_SPEED * (rand.nextBoolean() ? -1 : 1));
 	}
 
 	/**
@@ -220,7 +205,7 @@ public class Pong2App extends Application {
 	 */
 	private void spawn(GraphicsContext gc) {
 		ball = new Ball(BALL_X, BALL_Y, BALL_CIRCUMFERENCE, BALL_CIRCUMFERENCE, gc);
-		giveBallRandomVelocity();
+		pointWasMade = true;
 
 		leftPaddle = new Paddle(LEFT_PADDLE_X, PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT, "Left", gc);
 
@@ -236,49 +221,8 @@ public class Pong2App extends Application {
 	 *            The root to set up the UI on.
 	 */
 	private void setUpUI(Group root) {
-		basePane = new StackPane();
-
-		bgPane = new StackPane();
-		bgPane.setId("bg");
-
-		uiPane = new BorderPane(bgPane);
-
-		bgPane.getChildren().add(canvas);
-		basePane.getChildren().add(uiPane);
-		root.getChildren().add(basePane);
-
-		leftPaddleScoreLabel = new Label("Player 1 Score: " + leftPaddleScore);
-		leftPaddleScore = 0;
-
-		rightPaddleScoreLabel = new Label("Player 2 Score: " + rightPaddleScore);
-		rightPaddleScore = 0;
-
-		HBox scoreHolder = new HBox(100, leftPaddleScoreLabel, rightPaddleScoreLabel);
-		scoreHolder.setAlignment(Pos.CENTER);
-
-		BorderPane.setAlignment(scoreHolder, Pos.CENTER);
-		BorderPane.setMargin(scoreHolder, new Insets(30, 30, 0, 30));
-		uiPane.setTop(scoreHolder);
-
-		Text instructions = new Text();
-		instructions.setText("Player 1 Controls: W to move up, S to move down"
-				+ "\nPlayer 2 Controls: Up Arrow key to move up, Down Arrow key to move down"
-				+ "\nOnce a Player has made a point, press SPACEBAR to serve ball");
-		
-		BorderPane.setAlignment(instructions, Pos.CENTER);
-		BorderPane.setMargin(instructions, new Insets(30));
-		uiPane.setBottom(instructions);
-		
-		/*
-		ballInfo = new Text();
-		leftPaddleInfo = new Text();
-		rightPaddleInfo = new Text();
-		stats = new VBox(20, instructions, leftPaddleInfo, ballInfo, rightPaddleInfo);
-		
-		BorderPane.setAlignment(stats, Pos.CENTER_RIGHT);
-		BorderPane.setMargin(stats, new Insets(30, 0, 0, 30));
-		uiPane.setBottom(stats);
-		*/
+		uiPane = new UIPane(root, canvas, leftPaddleScoreLabel, leftPaddleScore, rightPaddleScoreLabel,
+				rightPaddleScore);
 	}
 
 	/**
@@ -307,7 +251,7 @@ public class Pong2App extends Application {
 				break;
 			case SPACE:
 				if (pointWasMade) {
-					// reset();
+					uiPane.removePointNotification();
 					giveBallRandomVelocity();
 					pointWasMade = false;
 				}
