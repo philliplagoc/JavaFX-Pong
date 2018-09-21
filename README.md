@@ -8,7 +8,7 @@ To play...
 1) Download Eclipse IDE (https://www.eclipse.org/ide/).
 2) Clone my GameEngine repository along with the Pong repository.
 3) Open these two repositories up in Eclipse.
-4) Run the Pong2App.java class in Eclipse.
+4) Run the Pong2App.java file in Eclipse.
 
 ## Controls: 
 ### Player 1 Controls ###
