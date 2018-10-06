@@ -26,6 +26,5 @@ To play...
 **SPACE BAR** - Serve the ball
 
 ## Screenshots:
-<img src="/pong1.png" style="float: left; margin-right: 10px;" />
-
-<img src="/pong2.png" style="float: left; margin-right: 10px;" />
+<img src="/pong1.png" style="float: left; margin-right: 15px;" />
+<img src="/pong2.png" style="float: left; margin-right: 15px;" />
